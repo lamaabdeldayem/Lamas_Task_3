@@ -30,6 +30,19 @@ export default function AllPerks() {
 
 */
 
+  // --- MODIFICATION START ---
+  // This single useEffect handles both initial data loading and
+  // re-fetching when search or filter values change.
+  useEffect(() => {
+    // This runs on mount (for initial load)
+    // and whenever searchQuery or merchantFilter changes.
+    loadAllPerks();
+    
+    // We disable the exhaustive-deps rule because loadAllPerks
+    // is stable and doesn't need to be in the dependency array.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery, merchantFilter]); // Dependency: re-run when these values change
+  // --- MODIFICATION END ---
   
   useEffect(() => {
     // Extract all merchant names from perks array
@@ -136,7 +149,10 @@ export default function AllPerks() {
                 type="text"
                 className="input"
                 placeholder="Enter perk name..."
-                
+                // --- MODIFICATION START ---
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                // --- MODIFICATION END ---
               />
               <p className="text-xs text-zinc-500 mt-1">
                 Auto-searches as you type, or press Enter / click Search
@@ -151,7 +167,10 @@ export default function AllPerks() {
               </label>
               <select
                 className="input"
-                
+                // --- MODIFICATION START ---
+                value={merchantFilter}
+                onChange={e => setMerchantFilter(e.target.value)}
+                // --- MODIFICATION END ---
               >
                 <option value="">All Merchants</option>
                 
@@ -208,8 +227,7 @@ export default function AllPerks() {
       {/* Perks Grid - Always visible, updates in place */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         
-        {/* 
-          Conditional Rendering with map():
+        {/* Conditional Rendering with map():
           - If perks.length > 0: Show perk cards
           - If perks.length === 0: Show empty state (after the map)
         */}
@@ -289,4 +307,3 @@ export default function AllPerks() {
     </div>
   )
 }
-
